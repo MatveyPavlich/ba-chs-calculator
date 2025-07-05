@@ -1,45 +1,44 @@
-%define num1 memory_buffer
-%define num2 memory_buffer + 3
-
-%macro print 2
-    MOV eax, 4            ; SYS_WRITE
-    MOV ebx, 1            ; FD_STDOUT
-    MOV ecx, %1           ; String start
-    MOV edx, %2           ; String length
-    INT 0x80              ; Call interrupt
-
-%endmacro
-
-%macro read 2
-    MOV eax, 3            ; SYS_READ
-    MOV ebx, 1            ; FD_STDIN
-    MOV ecx, %1           ; memo to store read
-    MOV edx, %2           ; Max read length
-    INT 0x80              ; Call interrupt
-
-%endmacro
-
-section .data
-    input_lba               DB "Enter LBA: ", 0x00
-    input_lba_len           EQU $ - input_lba
-    
-    output_chs              DB "CHS: ", 0x0A, 0x00
-    output_chs_len          EQU $ - output_chs
-    
-    disk_heads              DB 2
-    disk_sectors_per_track  DB 18
-
-
-section .bss
-    memory_buffer RESB 10
+%include "./src/data.asm"
+%include "./src/functions.asm"
 
 section .text
 global _start
 
 _start:
+    MOV esi, output_string
     print input_lba,  input_lba_len
-    read num1, 3
+    read lba, 3
+
+    ; MOV al, [lba]                       ; Get LBA
+    MOV ax, [disk_heads]                  ; Move number of disk heads from memo
+    MUL WORD [disk_sectors_per_track]     ; Get sectors in a cylinder
+    MOV BYTE [sectors_in_cylinder], al    ; Save the value of sectors in a cylinder
+    XOR eax, eax
+    MOV al, [lba]
+    DIV BYTE [sectors_in_cylinder]
+    MOV [esi], al
+    INC esi
+    add_comma
+
+    XOR al, al
+    MOV al, ah                            ; Get remainding sectors
+    INC al
+    XOR ah, ah
+    DIV WORD [disk_sectors_per_track]   ; do sectors / 
+    MOV [esi], al
+    INC esi
+    add_comma
+    MOV [esi], ah
+    INC esi
+    MOV BYTE [esi], 0x0A
+    INC esi
+    MOV BYTE [esi], 0x00
+    XOR eax, eax
+    MOV eax, esi
+    SUB eax, output_string 
+
     print output_chs, output_chs_len
+    print output_string, eax
 
     MOV eax, 1
     XOR ebx, ebx
