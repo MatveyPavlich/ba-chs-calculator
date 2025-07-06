@@ -29,7 +29,7 @@ _start:
     MOV al, ah                            ; Get remainding sectors
     INC al
     XOR ah, ah
-    DIV WORD [disk_sectors_per_track]   ; do sectors /
+    DIV BYTE [disk_sectors_per_track]   ; do sectors /
     ADD al, '0' 
     MOV [esi], al
     INC esi
@@ -40,14 +40,9 @@ _start:
     MOV BYTE [esi], 0x0A
     INC esi
     MOV BYTE [esi], 0x00
-    INC esi
-    XOR eax, eax
-    MOV eax, esi
-    SUB eax, output_string 
-    PUSH eax
+    SUB esi, output_string 
 
-    XOR eax, eax
-    print output_chs, output_chs_len
+    print output_chs, esi
     POP eax
     print output_string, eax
 

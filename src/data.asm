@@ -9,6 +9,7 @@ section .data
     disk_sectors_per_track  DW 18
 
 section .bss
-    lba                     RESB 2
+    lba                     RESB 3
     sectors_in_cylinder     RESB 1
     output_string           RESB 20
+    output_len              RESB 1
