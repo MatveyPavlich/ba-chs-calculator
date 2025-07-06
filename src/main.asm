@@ -39,12 +39,15 @@ _start:
     INC esi
     MOV BYTE [esi], 0x0A
     INC esi
-    MOV BYTE [esi], 0x00
     SUB esi, output_string 
 
-    print output_chs, esi
-    POP eax
-    print output_string, eax
+    print output_chs, output_chs_len
+
+    XOR eax, eax
+    XOR ebx, ebx
+    XOR ecx, ecx
+    XOR edx, edx
+    print output_string, esi
 
     MOV eax, 1
     XOR ebx, ebx

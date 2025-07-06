@@ -9,7 +9,7 @@
 
 %macro read 2
     MOV eax, 3            ; SYS_READ
-    MOV ebx, 1            ; FD_STDIN
+    MOV ebx, 0            ; FD_STDIN
     MOV ecx, %1           ; memo to store read
     MOV edx, %2           ; Max read length
     INT 0x80              ; Call interrupt
