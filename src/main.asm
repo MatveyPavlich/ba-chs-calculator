@@ -7,11 +7,11 @@ section .text
 global _start
 
 _start:
-    MOV esi, output_string
+    MOV   esi,        output_string
     print input_lba,  input_lba_len
-    read lba, 3
+    read  lba,        3
 
-    MOV ax, [disk_heads]                  ; Move number of disk heads from memo
+    MOV   ax,         [disk_heads]        ; Move number of disk heads from memo
     MUL WORD [disk_sectors_per_track]     ; Get sectors in a cylinder
     MOV BYTE [sectors_in_cylinder], al    ; Save the value of sectors in a cylinder
     XOR eax, eax
@@ -34,6 +34,7 @@ _start:
     MOV [esi], al
     INC esi
     add_comma
+    CALL print_sectors
     ADD ah, '0'
     MOV [esi], ah
     INC esi

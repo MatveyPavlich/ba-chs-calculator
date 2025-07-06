@@ -43,3 +43,19 @@
 
 %%end_conversion:
 %endmacro
+
+print_sectors:
+    CMP ah, 10
+    JGE .two_digits
+    RET
+
+.two_digits:
+    MOV al, ah
+    XOR ah, ah
+    MOV bl, 10
+    DIV bl
+    ADD al, '0'
+    MOV [esi], al
+    INC esi
+    XOR al, al
+    RET
