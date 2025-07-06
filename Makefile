@@ -10,7 +10,7 @@ run: main
 	./build/main
 
 debug: main
-	gdb ./build/main
+	gdb -q -ex "set pagination off" -x .gdbinit ./build/main
 
 clean:
 	rm ./build/*
