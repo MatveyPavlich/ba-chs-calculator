@@ -23,7 +23,7 @@ _start:
 
     POP ebx
     DIV bl   
-    ADD al, '0'
+    ADD al, '0'                           ; Convert integer to a string
     MOV BYTE [esi], 'C'
     INC esi
     MOV BYTE [esi], '='
@@ -49,7 +49,7 @@ _start:
     INC esi
     MOV BYTE [esi], '='
     INC esi
-    
+
     CALL print_sectors
     ADD ah, '0'
     MOV [esi], ah
