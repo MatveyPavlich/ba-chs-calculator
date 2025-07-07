@@ -7,20 +7,27 @@ section .text
 global _start
 
 _start:
-    MOV esi, output_string
+    MOV   esi,        output_string
     print input_lba,  input_lba_len
-    read lba, 3
+    read  lba,        3
 
-    MOV ax, [disk_heads]                  ; Move number of disk heads from memo
+    MOV   ax,         [disk_heads]        ; Move number of disk heads from memo
     MUL WORD [disk_sectors_per_track]     ; Get sectors in a cylinder
-    MOV BYTE [sectors_in_cylinder], al    ; Save the value of sectors in a cylinder
+    MOV bl, al                            ; Move sectors / cylinder to bl
+    PUSH ebx                              ; Save the value of sectors in a cylinder
+    
     XOR eax, eax
+    XOR ebx, ebx
+    XOR ecx, ecx
+    atoi lba                              ; Convert imputted string to int
 
-    ; Convert string to int
-    atoi lba
-
-    DIV BYTE [sectors_in_cylinder]
-    ADD al, '0'
+    POP ebx
+    DIV bl   
+    ADD al, '0'                           ; Convert integer to a string
+    MOV BYTE [esi], 'C'
+    INC esi
+    MOV BYTE [esi], '='
+    INC esi
     MOV [esi], al
     INC esi
     add_comma
@@ -29,22 +36,35 @@ _start:
     MOV al, ah                            ; Get remainding sectors
     INC al
     XOR ah, ah
-    DIV BYTE [disk_sectors_per_track]   ; do sectors /
-    ADD al, '0' 
+    DIV BYTE [disk_sectors_per_track]     ; do sectors / (sectors in a cylinder)
+    ADD al, '0'
+    MOV BYTE [esi], 'H'
+    INC esi
+    MOV BYTE [esi], '='
+    INC esi
     MOV [esi], al
     INC esi
     add_comma
+    MOV BYTE [esi], 'S'
+    INC esi
+    MOV BYTE [esi], '='
+    INC esi
+
+    CALL print_sectors
     ADD ah, '0'
     MOV [esi], ah
     INC esi
     MOV BYTE [esi], 0x0A
     INC esi
-    MOV BYTE [esi], 0x00
     SUB esi, output_string 
 
-    print output_chs, esi
-    POP eax
-    print output_string, eax
+    print output_chs, output_chs_len
+
+    XOR eax, eax
+    XOR ebx, ebx
+    XOR ecx, ecx
+    XOR edx, edx
+    print output_string, esi
 
     MOV eax, 1
     XOR ebx, ebx
