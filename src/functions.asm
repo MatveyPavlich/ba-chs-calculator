@@ -25,10 +25,6 @@
 
 ; %1 - lba
 %macro atoi 1
-    XOR eax, eax
-    XOR ebx, ebx
-    XOR ecx, ecx
-
     MOV al, [%1]                            ; Get inputted lba
     SUB al, '0'                           ; Convert to integer
     CMP BYTE [(%1 + 1)], 0x0A
@@ -36,12 +32,12 @@
     MOV bl, [(%1 + 1)]
     SUB bl, '0'
     MOV cl, 10
-    
     MUL cl                            ; *10 the first number since it is x*10^1
     ADD al, bl
     JMP %%end_conversion
 
 %%end_conversion:
+    XOR bl, bl
 %endmacro
 
 print_sectors:

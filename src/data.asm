@@ -1,6 +1,5 @@
 section .bss
     lba                     RESB 3
-    sectors_in_cylinder     RESB 1
     output_string           RESB 20
     output_len              RESB 1
 
